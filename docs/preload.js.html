@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: preload.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: preload.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file preload.js
+ * @description This file is used to expose custom APIs to the renderer process.
+ */
+
+const { contextBridge, ipcRenderer } = require('electron');
+
+/**
+ * Expose custom APIs to the renderer process
+ */
+contextBridge.exposeInMainWorld('api', {
+    /**
+     * Open a file dialog to select a file.
+     * @returns {Promise&lt;{fileName: string, fileData: string}>} The selected file's name and data.
+     */
+    selectFile: () => ipcRenderer.invoke('dialog:openFile'),
+
+    /**
+     * Save a ROM to the file system and database.
+     * @param {string} fileName - The name of the file.
+     * @param {string} data - The base64 encoded data of the file.
+     * @returns {Promise&lt;boolean>} A promise that resolves to true if the ROM is saved successfully.
+     */
+    saveRom: (fileName, data) => ipcRenderer.invoke('rom:save', fileName, data),
+
+    /**
+     * Load all ROMs from the database.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of ROM objects.
+     */
+    loadRoms: () => ipcRenderer.invoke('rom:load'),
+
+    /**
+     * Delete a ROM from the file system and database.
+     * @param {string} fileName - The name of the file to delete.
+     * @returns {Promise&lt;boolean>} A promise that resolves to true if the ROM is deleted successfully.
+     */
+    deleteRom: (fileName) => ipcRenderer.invoke('rom:delete', fileName),
+
+    /**
+     * Edit game details in the database.
+     * @param {Object} game - The game object containing updated details.
+     * @returns {Promise&lt;boolean>} A promise that resolves to true if the game is updated successfully.
+     */
+    editRom: (game) => ipcRenderer.invoke('rom:edit', game),
+
+    /**
+     * Toggle the favorite status of a game.
+     * @param {string} gamePath - The path of the game.
+     * @returns {Promise&lt;number>} A promise that resolves to the new favorite status (0 or 1).
+     */
+    toggleFavorite: (gamePath) => ipcRenderer.invoke('toggleFavorite', gamePath),
+
+    /**
+     * Show a message box dialog.
+     * @param {Object} options - The options for the message box.
+     * @returns {Promise&lt;number>} A promise that resolves to the index of the button clicked.
+     */
+    showMessageBox: (options) => ipcRenderer.invoke('show-dialog', options),
+
+    /**
+     * Show a custom dialog.
+     * @param {Object} options - The options for the custom dialog.
+     * @returns {Promise&lt;any>} A promise that resolves to the response from the dialog.
+     */
+    showCustomDialog: (options) => ipcRenderer.invoke('show-custom-dialog', options),
+
+    /**
+     * Send a response from the custom dialog.
+     * @param {any} response - The response to send.
+     */
+    sendDialogResponse: (response) => ipcRenderer.send('dialog-response', response),
+
+    /**
+     * Listen for the 'set-content' event and execute a callback.
+     * @param {function(string): void} callback - The callback to execute when the event is received.
+     */
+    onSetContent: (callback) => ipcRenderer.on('set-content', (event, content) => callback(content)),
+
+    /**
+     * Open a file dialog to select a file.
+     * @returns {Promise&lt;string>} A promise that resolves to the selected file path.
+     */
+    openFileDialog: () => ipcRenderer.invoke('open-file-dialog')
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Preload.js loaded");
+});
+
+/**
+ * Event listener for the global event "exitEmulator"
+ * 
+ * @description This event is triggered when the user exits the emulator.
+ * We can use this event to reload the window when the user exits the emulator.
+ */
+document.addEventListener("exitEmulator", function (event) {
+    console.log("Global event exitEmulator");
+    console.log("Message: " + event.detail.message);
+    console.log("Time: " + event.detail.time);
+    console.log("Game: " + event.detail.game);
+    console.log("Exit: " + event.detail.exit);
+    if (event.detail.exit) {
+        window.location.reload();
+    }
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanGameName">cleanGameName</a></li><li><a href="global.html#createWindow">createWindow</a></li><li><a href="global.html#db">db</a></li><li><a href="global.html#deleteRom">deleteRom</a></li><li><a href="global.html#editRom">editRom</a></li><li><a href="global.html#loadGame">loadGame</a></li><li><a href="global.html#loadGameDetails">loadGameDetails</a></li><li><a href="global.html#loadGameLibrary">loadGameLibrary</a></li><li><a href="global.html#loadRoms">loadRoms</a></li><li><a href="global.html#onSetContent">onSetContent</a></li><li><a href="global.html#openFileDialog">openFileDialog</a></li><li><a href="global.html#organizeLibrary">organizeLibrary</a></li><li><a href="global.html#populateGameTable">populateGameTable</a></li><li><a href="global.html#populateSystemNav">populateSystemNav</a></li><li><a href="global.html#saveRom">saveRom</a></li><li><a href="global.html#selectFile">selectFile</a></li><li><a href="global.html#sendDialogResponse">sendDialogResponse</a></li><li><a href="global.html#showCustomDialog">showCustomDialog</a></li><li><a href="global.html#showGameTableView">showGameTableView</a></li><li><a href="global.html#showMessageBox">showMessageBox</a></li><li><a href="global.html#toggleFavorite">toggleFavorite</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Sep 19 2024 11:41:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

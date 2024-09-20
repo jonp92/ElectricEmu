@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ElectricEmu</title>
+    <link rel="icon" href="docs/favicon.ico" sizes="16x16 32x32 48x48 64x64" type="image/vnd.microsoft.icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="photon.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="window" id="window">
+        <header class="toolbar toolbar-header draggable">
+            <div class="toolbar-container padded-less">
+                <div class="toolbar-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-default library-control disabled" id="playButtonTitle" title="Play Game" data-action="play" data-path="">
+                            <span class="icon icon-play"></span>
+                        </button>
+                        <button class="btn btn-default" id="romUpload" title="Manually Add a Game" disabled>
+                            <span class="icon icon-plus"></span>
+                        </button>
+                        <button class="btn btn-default" id="openFileButton" title="Automatically Add Game from ROM">
+                            <span class="icon icon-folder"></span>
+                        </button>
+                        <button class="btn btn-default library-control" id="editButton" title="Edit Game" data-action="edit" data-path="">
+                            <span class="icon icon-pencil"></span>
+                        </button>
+                        <button class="btn btn-default library-control" id="deleteButton" title="Delete Game" data-action="delete" data-path="">
+                            <span class="icon icon-trash"></span>
+                        </button>
+                        <button class="btn btn-default library-control" id="favoriteButton" title="Favorite Game" data-action="favorite" data-path="">
+                            <span class="icon icon-star"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="icon icon-search input-group-addon"></span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                </div>
+                <div class="toggle-container">
+                    <label class="switch">
+                        <input type="checkbox" id="modeToggle">
+                        <span class="slider">
+                            <span class="slider-icons">
+                                <span class="icon icon-light-up" id="sunIcon"></span>
+                                <span class="icon icon-moon" id="moonIcon"></span>
+                            </span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <div class="window-content">
+            <div class="pane-group">
+
+                <!-- Sidebar Navigation -->
+                <div class="pane-sm sidebar">
+                    <nav class="nav-group">
+                        <h5 class="nav-group-title" id="navGroupTitle">Library</h5>
+
+                        <!-- All ROMs -->
+                        <div class="nav-group-item" id="allRomsNav">
+                            <span class="icon icon-folder"></span>
+                            All ROMs
+                        </div>
+
+                        <!-- Favorites -->
+                        <div class="nav-group-item" id="favoritesNav">
+                            <span class="icon icon-star"></span>
+                            Favorites
+                        </div>
+
+                        <!-- By System -->
+                        <div class="nav-group-item" id="bySystemNav">
+                            <span class="icon icon-monitor"></span>
+                            By System
+                        </div>
+                    </nav>
+                </div>
+
+                <!-- Main Pane for Game Table and Details -->
+                <div class="pane">
+                    <!-- Game Table View -->
+                    <div id="gameTableView" class="padded-more centered">
+                        <img src="docs/icons/linux/logo_256.png" alt="ElectricEmu Logo" class="logo" id="logo">
+                        <h2 id="sectionTitle"></h2>
+                        <table class="table hidden" id="gameTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>System</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gameTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Game Details View (hidden by default) -->
+                    <div id="gameDetailsView" class="game-details-view" style="display: none;">
+                        <div class="left-column">
+                            <h2 id="gameTitle">Game Title</h2>
+                            <div class="game-artwork">
+                                <img id="gameArtwork" src="default-artwork.jpg" alt="Game Artwork" class="img-responsive">
+                            </div>
+                        </div>
+                        <div class="right-column">
+                            <div class="game-description">
+                                <p id="gameDescription">Game description goes here.</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-large btn-primary" id="playButton">Play</button>
+                                <button class="btn btn-large btn-warning" id="settingsButton">Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="toolbar toolbar-footer footer" id="footer">
+            Powered by:&nbsp;
+            <a href="https://emulatorjs.org" target="_blank" id="emuJSlink">EmulatorJS</a>
+
+        </footer>
+    </div>
+    <script src="romManager.js"></script>
+</body>
+</html>

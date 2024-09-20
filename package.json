@@ -1,0 +1,72 @@
+{
+  "name": "electric_emu",
+  "version": "1.0.1",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder",
+    "install": "prebuild-install -r napi || node-gyp rebuild"
+  },
+  "keywords": [
+    "electron",
+    "emulatorjs",
+    "emulator"
+  ],
+  "author": "Jonathan L. Pressler",
+  "license": "ISC",
+  "description": "A emulator built with Electron and EmulatorJS",
+  "devDependencies": {
+    "electron": "^32.1.0",
+    "electron-builder": "^25.0.5"
+  },
+  "build": {
+    "appId": "com.presslertech.electric_emu",
+    "productName": "ElectricEmu",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "assets/**/*",
+      "fonts/**/*"
+    ],
+    "mac": {
+      "icon": "assets/docs/icons/macos/logo.icns"
+    },
+    "win": {
+      "icon": "assets/docs/icons/windows/logo.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "linux": {
+      "icon": "assets/docs/icons/linux",
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "tar.gz"
+      ]
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "inquirer": "^11.0.2",
+    "prompt-sync": "^4.2.0",
+    "sqlite3": "^5.1.7"
+  }
+}

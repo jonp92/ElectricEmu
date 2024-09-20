@@ -1,0 +1,294 @@
+html {
+    color: white;
+}
+
+.dark-mode {
+    background-color: #333 !important;
+    /* color: #aaa; */
+}
+
+#box, #top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#box {
+    color: #aaa;
+    height: 20em;
+    width: 30em;
+    background-color: #555;
+    border-radius: 0.4em;
+    border: 2px solid #555;
+    position: relative;
+    transition-duration: 0.2s;
+    overflow: hidden;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#box:hover, #box[drag] {
+    border-color: #38f;
+    color: #ddd
+}
+
+#input {
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0
+}
+
+#display {
+    width: 100%;
+    height: 100%
+}
+
+/* select, button {
+    padding: 0.6em 0.4em;
+    margin: 0.5em;
+    width: 15em;
+    max-width: 100%;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #444;
+    color: #aaa;
+    border-radius: 0.4em;
+    border: 1px solid #555;
+    cursor: pointer;
+    transition-duration: 0.2s
+}
+
+select:hover, button:hover {
+    background-color: #666;
+    color: #ddd
+} */
+
+.logo {
+    width: 128px;
+    height: 128px;
+    filter: drop-shadow(0 0 10px #38f);
+}
+
+#top {
+    margin: 5px;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    height: 100%;
+}
+.draggable {
+    cursor: move;
+    --webkit-app-region: drag;
+}
+.immobile {
+    cursor: pointer;
+    --webkit-app-region: no-drag;
+}
+.visible {
+    visibility: visible;
+    transform: scale(1);
+    transition-duration: 0.2s;
+}
+.hidden {
+    visibility: hidden;
+    transform: scale(0);
+    transition-duration: 0.2s;
+}
+.rounded {
+    border-radius: 0.4em;
+}
+.selected {
+    background-color: #38f;
+    color: #ddd;
+}
+.toolbar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5em;
+}
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5em;
+    margin-right: 2em;
+}
+
+button {
+    -webkit-app-region: no-drag;
+}
+
+input {
+    -webkit-app-region: no-drag;
+}
+
+/* Toggle container */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Switch (slider) styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 34px;
+    margin-top: 3px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Slider styling */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Sun and moon icon positions inside the slider */
+.slider-icons {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 11px;
+}
+
+.icon-light-up {
+    color: #f39c12;  /* Yellow for sun */
+}
+
+.icon-moon {
+    color: #2980b9;  /* Blue for moon */
+}
+
+/* Change slider color when checked */
+input:checked + .slider {
+    background-color: #777;
+}
+
+/* Move the slider when checked */
+input:checked + .slider:before {
+    transform: translateX(46px);
+}
+
+/* Hide the sun in dark mode */
+input:checked + .slider .icon-light-up {
+    opacity: 0;
+}
+
+/* Hide the moon in light mode */
+input:not(:checked) + .slider .icon-moon {
+    opacity: 0;
+}
+.toolbar {
+    background-image: none;
+}
+.toolbar-header {
+    border-bottom: none;
+}
+/* Define a custom button color */
+.btn-custom {
+    background-color: #777; /* Change this to your desired color */
+    color: white; /* Ensure the text is readable */
+}
+
+
+
+/* Game Details View */
+#gameDetailsView {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+    padding: 20px;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.game-artwork {
+    margin-top: 20px;
+}
+
+.game-description {
+    margin-bottom: 20px;
+}
+
+.details-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.img-responsive {
+    max-width: 70%;
+    height: auto;
+}
+

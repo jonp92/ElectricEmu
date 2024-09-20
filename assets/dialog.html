@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="dialog-content"></div>
+    <div class="buttons">
+        <button id="ok-button">OK</button>
+        <button id="cancel-button">Cancel</button>
+    </div>
+    <script>
+        // Use the exposed API from the preload script
+    
+        document.getElementById('ok-button').addEventListener('click', () => {
+            window.api.sendDialogResponse(0);  // OK button clicked
+        });
+    
+        document.getElementById('cancel-button').addEventListener('click', () => {
+            window.api.sendDialogResponse(1);  // Cancel button clicked
+        });
+    
+        window.api.onSetContent(content => {
+            console.log('Setting content:', content);
+            document.getElementById('dialog-content').innerHTML = content;
+        });
+    </script>
+
+</body>
+</html>
