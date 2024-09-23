@@ -151,6 +151,11 @@ input {
     -webkit-app-region: no-drag;
 }
 
+span {
+    -webkit-app-region: no-drag;
+}
+
+
 /* Toggle container */
 .toggle-container {
     display: flex;
@@ -249,8 +254,6 @@ input:not(:checked) + .slider .icon-moon {
     background-color: #777; /* Change this to your desired color */
     color: white; /* Ensure the text is readable */
 }
-
-
 
 /* Game Details View */
 #gameDetailsView {

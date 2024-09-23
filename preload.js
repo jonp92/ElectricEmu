@@ -88,7 +88,16 @@ contextBridge.exposeInMainWorld('api', {
      * @param {string} system - The system of the game.
      */
     scrapeArtwork: (gameTitle, system) => ipcRenderer.invoke('scrapeArtwork', gameTitle, system),
+    /**
+     * Scrape Game metadata
+     * @param {string} gameTitle - The title of the game.
+     * @param {string} system - The system of the game.
+     */
+    scrapeMeta: (gameTitle, system, gamePath) => ipcRenderer.invoke('rom:scrape', gameTitle, system, gamePath),
+
 });
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Preload.js loaded");

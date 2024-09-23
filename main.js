@@ -3,12 +3,17 @@
  * @description Main process for the Electron application. Handles window creation, database initialization, and IPC event handling.
  */
 
+// Modules
 const { app, BrowserWindow, ipcMain, dialog, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const sqlite3 = require('sqlite3').verbose();
+const ejse = require('ejs-electron'); 
+
+// Custom modules
 const scrapeArtwork = require('./gameScraper');
+const { searchGame, getGame, getGameArt } = require('./ssapi');
 
 // Paths and global variables
 const launchFile = "assets/index.html";
@@ -223,19 +228,19 @@ ipcMain.handle('rom:delete', (event, fileName) => {
     return new Promise((resolve, reject) => {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
-            db.run('DELETE FROM games WHERE path = ?', [filePath], function(err) {
-                if (err) {
-                    console.error('Error deleting ROM from database:', err);
-                    reject(false);
-                } else {
-                    console.log('ROM deleted from database:', fileName);
-                    resolve(true);
-                }
-            });
         } else {
-            console.error('File does not exist:', filePath);
-            reject(false);
+            console.error('File not found:', fileName);
+            console.warn('Only deleting from database:', fileName);
         }
+        db.run('DELETE FROM games WHERE path = ?', [filePath], function(err) {
+            if (err) {
+                console.error('Error deleting ROM from database:', err);
+                reject(false);
+            } else {
+                console.log('ROM deleted from database:', fileName);
+                resolve(true);
+            }
+        });
     });
 });
 
@@ -261,6 +266,47 @@ ipcMain.handle('rom:edit', async (event, game) => {
             }
         );
     });
+});
+
+ipcMain.handle('rom:scrape', async (event, gameTitle, system, gamePath) => {
+    console.log('Title:', gameTitle, 'System:', system, 'Path:', gamePath);
+    const games = await searchGame(gameTitle);
+    // const games = {
+    //     response: {
+    //         jeux: [
+    //             {
+    //                 id: 1,
+    //                 noms: [
+    //                     {
+    //                         region: 'US',
+    //                         text: 'Sonic The Hedgehog 2'
+    //                     }
+    //                 ],
+    //                 synopsis: [
+    //                     {
+    //                         langue: 'en',
+    //                         text: 'Sonic and Tails are back for another adventure!'
+    //                     }
+    //                 ]
+    //             }
+    //         ]
+    //     }
+    // };
+    const customDialog = new BrowserWindow({
+        width: 400,
+        height: 500,
+        parent: mainWindow,
+        modal: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    ejse.data({games: games.response.jeux, gamePath: gamePath});
+    customDialog.loadFile('assets/scrapebrowser.ejs');
+    customDialog.show();
+
 });
 
 /**

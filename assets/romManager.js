@@ -106,6 +106,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('Playing ROM:', path);
                     loadGame(path, core, true, true);
                     break;
+                case 'scrape':
+                    console.log('Scraping metadata for game:', path);
+                    const gametoScrape = gameLibrary.allRoms.find(game => game.path === path);
+                    if (gametoScrape) {
+                        window.api.scrapeMeta(gametoScrape.name, '', gametoScrape.path).then(
+                            console.log('Scraped game:', gametoScrape.name)
+                        );
+                    }
+                    break;
                 case 'edit':
                     console.log('Editing ROM:', path);
                     const game = gameLibrary.allRoms.find(game => game.path === path);

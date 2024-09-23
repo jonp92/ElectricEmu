@@ -5,8 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "build": "electron-builder",
-    "install": "prebuild-install -r napi || node-gyp rebuild"
+    "build": "electron-builder"
   },
   "keywords": [
     "electron",
@@ -65,6 +64,8 @@
   "dependencies": {
     "axios": "^1.7.7",
     "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "ejs-electron": "^3.0.0",
     "inquirer": "^11.0.2",
     "prompt-sync": "^4.2.0",
     "sqlite3": "^5.1.7"
