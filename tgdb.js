@@ -9,6 +9,8 @@ const apiKey = process.env.TGDB_APIKEY;
 
 const version = 'v1';
 const baseURL = `https://api.thegamesdb.net/${version}/`;
+
+// Map of API endpoints
 const urlMethods = {
     Games: {
         fetchGamebyID: 'Games/ByGameID',
@@ -38,27 +40,31 @@ const artworkDir = './assets/artwork'; // Directory where artwork will be saved
 
 const searchGame = async (idType, game, system) => {
     const fields = 'id,name,release_date,platform,players,overview,genres,developers,publishers';
+    const include = 'boxart,platform';
     if (!idType || !game) {
         throw new Error('Missing required parameters.');
     }
     let searchURL;
     switch (idType) {
         case 'id':
-            searchURL = `${baseURL}${urlMethods.Games.fetchGamebyID}?apikey=${apiKey}&id=${game}&fields=${fields}`;
+            searchURL = `${baseURL}${urlMethods.Games.fetchGamebyID}?apikey=${apiKey}&id=${game}&fields=${fields}&include=${include}`;
             break;
         case 'name':
-            searchURL = `${baseURL}${urlMethods.Games.fetchGamebyName}?apikey=${apiKey}&name=${game}&fields=${fields}`;
+            searchURL = `${baseURL}${urlMethods.Games.fetchGamebyName}?apikey=${apiKey}&name=${game}&fields=${fields}&include=${include}`;
             break;
         default:
             throw new Error('Invalid ID type.');
     }
     const response = await axios.get(searchURL);
     const searchResults = response.data;
-    console.log(searchResults.data.games);
     return searchResults;
 }
 
 const getGameArt = async (gameID, type) => {
+    // Create artwork directory if it doesn't exist
+    if (!fs.existsSync(artworkDir)) {
+        fs.mkdirSync(artworkDir);
+    }
     const gameArtURL = `${baseURL}${urlMethods.Games.fetchGameImages}?apikey=${apiKey}&games_id=${gameID}&filter[type]=${type}`;
     console.log(gameArtURL);
     const validTypes = ['fanart', 'banner', 'boxart', 'screenshot', 'clearlogo', 'titlescreen'];
@@ -68,14 +74,18 @@ const getGameArt = async (gameID, type) => {
 
     let images = await axios.get(gameArtURL);
     images = images.data;
-    const imageBaseUrl = images.data.base_url.original;
+    const imageBaseUrl = images.data.base_url.thumb;
     console.log('img base url:', imageBaseUrl);
     images = images.data.images[gameID]
+
+    let imagePaths = [];
 
     const downloadPromises = images.map(image => {
         const imageURL = `${imageBaseUrl}${image.filename}`;
         console.log('Downloading image:', imageURL);
-        const writer = fs.createWriteStream(path.join(artworkDir, `${image.id}_${type}.png`));
+        const imagePath = path.join(artworkDir, `${image.id}_${type}.png`)
+        imagePaths.push(imagePath);
+        const writer = fs.createWriteStream(imagePath);
         return axios({
             url: imageURL,
             method: 'GET',
@@ -89,7 +99,8 @@ const getGameArt = async (gameID, type) => {
         });
     });
 
-    return Promise.all(downloadPromises);
+    await Promise.all(downloadPromises);
+    return imagePaths;
 };
 
 const getGameUpdates = async (gameID) => {
@@ -211,7 +222,6 @@ const cleanHTML = (synopsis) => {
         .replace(/&times;/g, '×')
         .replace(/&divide;/g, '÷');
 }
-
 
 const test = async () => {
     let game = 'Sonic The Hedgehog 2';

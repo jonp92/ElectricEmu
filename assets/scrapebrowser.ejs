@@ -32,9 +32,12 @@
             flex-direction: row;
             gap: 0.5em;
         }
+
     </style>
 </head>
 <body>
+    <input type="hidden" id="gamePath" value="<%= gamePath %>">
+    <input type="hidden" id="baseURL" value="<%= games.include.boxart.base_url.medium %>">
     <header class="toolbar toolbar-header draggable">
         <div class="padded-less">
             <div class="toolbar-actions">
@@ -46,40 +49,23 @@
                         <span class="icon icon-arrows-ccw"></span>
                     </button>
                 </div>
-                
             </div>
         </div>
     </header>
     <div class="container mt-5">
         <div class="row">
-            <% games.forEach(game => { %>
+            <% games.data.games.forEach(game => { %>
                 <div class="col-md-4 mb-4">
                     <div class="card" style="cursor: pointer;">
-                        <img src="<%= game.medias[0].url %>" class="card-img-top" alt="<%= game.title %> screenshot" id="gameArtwork">
-                        <div class="card-body">
-                            <h5 class="card-title" id="gameName"><%= game.noms[0].text %></h5>
-                            <p class="card-text" id="gameYear"><strong>Year:</strong> 
-                                <% if (game.dates && game.dates.length > 0) { %>
-                                    <% game.dates.forEach(date => { %>
-                                        <% if (date.region === 'us') { %>
-                                            <%= date.text ? date.text : '' %><br>
-                                        <% } %>
-                                    <% }); %>
-                                <% } else { %>
-                                    N/A
-                                <% } %>
+                        <input type="hidden" id="gameart" value="<%= games.include.boxart.data[game.id][0].filename %>">
+                        <input type="hidden" id="gameid" value="<%= game.id %>">
+                        <img src="" class="card-img-top" alt="<%= game.title %> screenshot" id="gameArtwork">
+                        <div class="card-body" id="<%= game.id %>_container">
+                            <h5 class="card-title" id="gameName"><%= game.game_title %></h5>
+                            <p class="card-text" id="gameYear"><strong>Year:</strong> <%= game.release_date %>
                             </p>
-                            <p class="card-text" id="gameConsole"><strong>Console:</strong> <%= game.systeme.text %></p>
-                            <p class="card-text" id="gameDescription"><strong>Description:</strong> 
-                                <% if (game.synopsis && game.synopsis.length > 0) { %>
-                                    <% game.synopsis.forEach(synopsis => { %>
-                                        <% if (synopsis.langue === 'en') { %>
-                                            <%= synopsis.text ? synopsis.text : '' %><br>
-                                        <% } %>
-                                    <% }); %>
-                                <% } else { %>
-                                    N/A
-                                <% } %>
+                            <p class="card-text" id="gameConsole"><strong>Platform:</strong> <%= game.platform %></p>
+                            <p class="card-text" id="gameDescription"><strong>Overview:</strong> <%= game.overview %>
                             </p>
                         </div>
                     </div>
@@ -93,27 +79,54 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Custom JS -->
     <script>
+        const systemMap = {
+            3: 'N64',
+            4: 'GB',
+            5: 'GBA',
+            6: 'SNES',
+            7: 'NES',
+            10: 'PSX',
+            18: 'GEN'
+        }
+        document.querySelectorAll('#gameArtwork').forEach(artwork => {
+            const gameart = artwork.parentElement.parentElement.querySelector('#gameart').value;
+            let artworkURL = `<%= games.include.boxart.base_url.original %>${gameart}`;
+            artwork.src = artworkURL;
+        });
+        document.getElementById('exitWindow').addEventListener('click', () => {
+            window.close();
+        });
+        document.getElementById('refreshWindow').addEventListener('click', () => {
+            location.reload();
+        });
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
                 const result = confirm('Update game with this metadata?');
-                const game = {
+                const gameID = card.querySelector('#gameid').value;
+                const gameCore = systemMap[card.querySelector('#gameConsole').innerText.split(':')[1].trim()];
+                let game = {
                     name: card.querySelector('#gameName').innerText,
-                    core: card.querySelector('#gameConsole').innerText.split(':')[1].trim(), // Remove 'Console:' prefix
+                    tgdb_id: gameID,
+                    core: gameCore, 
                     description: card.querySelector('#gameDescription').innerText.split(':')[1].trim(), // Remove 'Description:' prefix
                     artwork: card.querySelector('#gameArtwork').src,
-                    path: '<%= gamePath %>'
+                    path: document.getElementById('gamePath').value
                 };
                 if (result) {
-                    window.api.editRom(game).then(response => {
+                        window.api.getGameArt(game.tgdb_id, 'boxart').then(response => {
+                            game.artwork = response[0].split('assets/')[1];
+                            window.api.editRom(game).then(response => {
+                            alert(response);
+                            game.artwork = response;
+                        }).catch(error => {
+                            alert(error);
+                        });
                         alert(response);
                     }).catch(error => {
                         alert(error);
                     });
                 }
             });
-        });
-        document.getElementById('exitWindow').addEventListener('click', () => {
-            window.close();
         });
     </script>
 </body>

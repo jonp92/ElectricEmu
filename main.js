@@ -12,8 +12,7 @@ const sqlite3 = require('sqlite3').verbose();
 const ejse = require('ejs-electron'); 
 
 // Custom modules
-const scrapeArtwork = require('./gameScraper');
-const { searchGame, getGame, getGameArt } = require('./ssapi');
+const { searchGame, getGameArt } = require('./tgdb');
 
 // Paths and global variables
 const launchFile = "assets/index.html";
@@ -41,6 +40,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
       db.run(`
           CREATE TABLE IF NOT EXISTS games (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              tgdb_id INTEGER,
               name TEXT NOT NULL,
               path TEXT NOT NULL UNIQUE,
               core TEXT NOT NULL,
@@ -167,37 +167,29 @@ ipcMain.handle('rom:save', (event, fileName, data) => {
     const filePath = path.join(romsPath, fileName);
     const fileNameNoExt = fileName.split('.').slice(0, -1).join('.');
     const core = fileName.split('.').pop();
-    let found;
-    let cleanedFilename;
-    scrapeArtwork(fileNameNoExt, core).then((result) => {
-        found = result.found;
-        cleanedFilename = result.cleanedFilename;
-        console.log('Artwork found:', found, 'Cleaned filename:', cleanedFilename);
-        const artworkPath = found ? cleanedFilename : null; 
-        return new Promise((resolve, reject) => {
-            try {
-                fs.writeFileSync(filePath, data, 'base64');
-                db.run(
-                    `INSERT INTO games (name, path, core, artwork) VALUES (?, ?, ?, ?)
-                    ON CONFLICT(path) DO UPDATE SET
-                        name=excluded.name,
-                        core=excluded.core`,
-                    [cleanGameName(fileNameNoExt), filePath, core, `artwork/${artworkPath}`],
-                    function(err) {
-                        if (err) {
-                            console.error('Error saving ROM to database:', err);
-                            reject(false);
-                        } else {
-                            console.log('ROM saved to database:', fileName);
-                            resolve(true);
-                        }
+    return new Promise((resolve, reject) => {
+        try {
+            fs.writeFileSync(filePath, data, 'base64');
+            db.run(
+                `INSERT INTO games (name, path, core, artwork) VALUES (?, ?, ?, ?)
+                ON CONFLICT(path) DO UPDATE SET
+                    name=excluded.name,
+                    core=excluded.core`,
+                [cleanGameName(fileNameNoExt), filePath, core, null],
+                function(err) {
+                    if (err) {
+                        console.error('Error saving ROM to database:', err);
+                        reject(false);
+                    } else {
+                        console.log('ROM saved to database:', fileName);
+                        resolve(true);
                     }
-                );
-            } catch (error) {
-                console.error('Error saving ROM:', error);
-                reject(false);
-            }
-        });
+                }
+            );
+        } catch (error) {
+            console.error('Error saving ROM:', error);
+            reject(false);
+        }
     });
 });
 
@@ -270,7 +262,7 @@ ipcMain.handle('rom:edit', async (event, game) => {
 
 ipcMain.handle('rom:scrape', async (event, gameTitle, system, gamePath) => {
     console.log('Title:', gameTitle, 'System:', system, 'Path:', gamePath);
-    const games = await searchGame(gameTitle);
+    const games = await searchGame('name', gameTitle);
     // const games = {
     //     response: {
     //         jeux: [
@@ -303,7 +295,8 @@ ipcMain.handle('rom:scrape', async (event, gameTitle, system, gamePath) => {
             nodeIntegration: true
         }
     });
-    ejse.data({games: games.response.jeux, gamePath: gamePath});
+    // console.log('Games:', games);
+    ejse.data({games: games, gamePath: gamePath});
     customDialog.loadFile('assets/scrapebrowser.ejs');
     customDialog.show();
 
@@ -457,9 +450,8 @@ ipcMain.handle('show-custom-dialog', async (event, options) => {
     });
 });
 
-// Expose scrapeArtwork function to the renderer process
-ipcMain.handle('scrapeArtwork', async (event, system, gameTitle) => {
-    const {found, cleanedFilename} = await scrapeArtwork(system, gameTitle);
-    console.log('Found:', found, 'Filename:', cleanedFilename);
-    return { found, cleanedFilename };
+
+ipcMain.handle('rom:getArtwork', async (event, gameID, type) => {
+    const gameArtwork = await getGameArt(gameID, type);
+    return gameArtwork;
 });

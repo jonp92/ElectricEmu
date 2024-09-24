@@ -95,6 +95,13 @@ contextBridge.exposeInMainWorld('api', {
      */
     scrapeMeta: (gameTitle, system, gamePath) => ipcRenderer.invoke('rom:scrape', gameTitle, system, gamePath),
 
+    /**
+     * Get Game Artwork
+     * @param {string} gameID - The title of the game.
+     * @param {string} type - The type of image.
+     */
+    getGameArt: (gameID, type) => ipcRenderer.invoke('rom:getArtwork', gameID, type),
+
 });
 
 

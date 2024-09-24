@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'play':
                     const core = path.split('.').pop();
                     console.log('Playing ROM:', path);
-                    loadGame(path, core, true, true);
+                    loadGame(path, core, true, false);
                     break;
                 case 'scrape':
                     console.log('Scraping metadata for game:', path);

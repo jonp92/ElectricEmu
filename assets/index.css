@@ -295,3 +295,52 @@ input:not(:checked) + .slider .icon-moon {
     height: auto;
 }
 
+#gameTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#gameTable th:nth-child(2),
+#gameTable td:nth-child(2) {
+    width: 65%; /* Adjust as needed */
+}
+#gameTable th:nth-child(3),
+#gameTable td:nth-child(3) {
+    width: 10%; /* Adjust as needed */
+}
+
+#gameTable td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tv-frame {
+    position: relative;
+    width: 260px;
+    height: 263.1818px;
+    background-image: url('Retro_TV.svg'); /* Your retro TV frame */
+    background-size: cover;
+}
+.tv-screen {
+    position: absolute;
+    top: 68.5px;
+    left: 18.5px;
+    width: 225px;  /* Make the image span the entire container */
+    height: 150px; /* Ensure the image fills the height */
+
+    object-fit: fill; /* Resize the image to cover the mask area, maintaining aspect ratio */
+
+    /* Mask settings */
+    mask-image: url('TV_Mask.svg'); /* Apply your SVG mask */
+    mask-size: contain; /* Scale the mask to cover the entire image */
+    mask-position: center; /* Center the mask on the image */
+    mask-repeat: no-repeat; /* Prevent the mask from repeating */
+
+    /* For Safari */
+    -webkit-mask-image: url('TV_Mask.svg');
+    -webkit-mask-size: contain;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+}
+
