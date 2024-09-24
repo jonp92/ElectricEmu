@@ -4,8 +4,11 @@
     <title>ElectricEmu</title>
     <link rel="icon" href="docs/favicon.ico" sizes="16x16 32x32 48x48 64x64" type="image/vnd.microsoft.icon">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="photon.min.css">
-    <link rel="stylesheet" href="index.css">
+    <meta name="description" content="ElectricEmu is a web-based game library manager and emulator frontend.">
+    
+    <link rel="stylesheet" href="css/photon.min.css">
+    <link rel="stylesheet" href="css/index.css">
+
 </head>
 <body>
     <div class="window" id="window">
@@ -87,6 +90,7 @@
                     <!-- Game Table View -->
                     <div id="gameTableView" class="padded-more centered">
                         <img src="docs/icons/linux/logo_256.png" alt="ElectricEmu Logo" class="logo" id="logo">
+                        
                         <h2 id="sectionTitle"></h2>
                         <table class="table hidden" id="gameTable">
                             <thead>
@@ -125,9 +129,8 @@
         <footer class="toolbar toolbar-footer footer" id="footer">
             Powered by:&nbsp;
             <a href="https://emulatorjs.org" target="_blank" id="emuJSlink">EmulatorJS</a>
-
         </footer>
     </div>
-    <script src="romManager.js"></script>
+    <script src="frontendJS/romManager.js"></script>
 </body>
 </html>
